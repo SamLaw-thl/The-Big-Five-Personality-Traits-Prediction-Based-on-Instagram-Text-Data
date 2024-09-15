@@ -24,33 +24,6 @@ def description_text(profile):
     return text
 
 
-# Personality detection based on bert-based personality model by Minej
-def personality_detection_bert_base(profile):
-    # Load the tokenizer and model from Hugging Face
-    tokenizer = BertTokenizer.from_pretrained("Minej/bert-base-personality")
-    model = BertForSequenceClassification.from_pretrained("Minej/bert-base-personality")
-
-    text = description_text(profile)
-
-    # Tokenize the input text
-    inputs = tokenizer(text, truncation=True, padding=True, return_tensors="pt")
-
-    # Get model prediction
-    outputs = model(**inputs)
-    predictions = outputs.logits.squeeze().detach().numpy()
-
-    # Apply softmax to the prediction to get probabilities
-    probabilities = softmax(predictions)
-
-    # define personality traits
-    label_names = ['Extroversion', 'Neuroticism', 'Agreeableness', 'Conscientiousness', 'Openness']
-
-    # Map predictions to traits
-    result = {label_names[i]: round(float(probabilities[i]), 2) for i in range(len(label_names))}
-
-    return result
-
-
 # Personality detection based on microsoft-finetuned personality model by Nasserelsaman
 def personality_detection_microsoft_finetuned(profile, threshold=0.05, endpoint= 1.0):
     token=os.getenv('huggingface_access_token')
@@ -80,6 +53,36 @@ def personality_detection_microsoft_finetuned(profile, threshold=0.05, endpoint=
     result = {label_names[i]: (probabilities[i], predictions[i]) for i in range(len(label_names))}
         
     return result
+
+
+# Personality detection based on bert-based personality model by Minej
+def personality_detection_bert_base(profile):
+    # Load the tokenizer and model from Hugging Face
+    tokenizer = BertTokenizer.from_pretrained("Minej/bert-base-personality")
+    model = BertForSequenceClassification.from_pretrained("Minej/bert-base-personality")
+
+    text = description_text(profile)
+
+    # Tokenize the input text
+    inputs = tokenizer(text, truncation=True, padding=True, return_tensors="pt")
+
+    # Get model prediction
+    outputs = model(**inputs)
+    predictions = outputs.logits.squeeze().detach().numpy()
+
+    # Apply softmax to the prediction to get probabilities
+    probabilities = softmax(predictions)
+
+    # define personality traits
+    label_names = ['Extroversion', 'Neuroticism', 'Agreeableness', 'Conscientiousness', 'Openness']
+
+    # Map predictions to traits
+    result = {label_names[i]: round(float(probabilities[i]), 2) for i in range(len(label_names))}
+
+    return result
+
+
+
 
 
 
