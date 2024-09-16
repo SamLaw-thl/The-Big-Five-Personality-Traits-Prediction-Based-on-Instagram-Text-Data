@@ -22,6 +22,12 @@
 
 ![big-five](/img/big-five.png)
 
+# Data Pipeline Flowchart
+![flowchart](./img/ig_flowchart.png)
+
+# Database Schema
+![schema](./img/instagram_schema.png)
+
 # Features
 1. Data Collection with `Instaloader`:
    * Fetches Instagram user profiles and their 10 most recent posts.
