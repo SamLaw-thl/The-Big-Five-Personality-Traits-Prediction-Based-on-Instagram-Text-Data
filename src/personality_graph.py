@@ -2,7 +2,16 @@ import pandas as pd
 import plotly.express as px
 
 # using bar graph to visualize the personality prediction results
-def personality_bar_chart(personality_prediction):
+def personality_bar_chart(personality_prediction: dict[str, tuple[float, float]]) -> None:
+    """
+    Creates a bar chart to visualize the predicted personality traits.
+
+    Args:
+        personality_prediction (Dict[str, Tuple[float, float]]):
+            A dictionary containing predicted personality traits.
+            - Keys: Personality trait names ('Agreeableness', 'Conscientiousness', etc.)
+            - Values: A tuple with two floats (raw probability, adjusted probability)
+    """
     personality_trait_list = list(personality_prediction.keys())
     prediction_list = [value[0] for value in personality_prediction.values()]
 
@@ -15,7 +24,17 @@ def personality_bar_chart(personality_prediction):
 
 
 # using rader chart to visualize the personality prediction results
-def personality_rader_chart(personality_prediction):
+def personality_rader_chart(personality_prediction: dict[str, tuple[float, float]]) -> None:
+    """
+    Creates a radar chart (spider chart) to visualize the predicted personality traits.
+
+    Args:
+        personality_prediction (Dict[str, Tuple[float, float]]):
+            A dictionary containing predicted personality traits.
+            - Keys: Personality trait names ('Agreeableness', 'Conscientiousness', etc.)
+            - Values: A tuple with two floats (raw probability, adjusted probability)
+
+    """
     personality_trait_list = list(personality_prediction.keys())
     prediction_list = [value[0] for value in personality_prediction.values()]
 

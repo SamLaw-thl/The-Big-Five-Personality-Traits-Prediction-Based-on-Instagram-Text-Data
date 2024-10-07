@@ -1,8 +1,15 @@
 import sqlite3
+import instaloader
 
 
 # Create sqlite table
-def create_table():
+def create_table() -> None:
+    """
+    Creates SQLite tables for user profiles and posts in the 'instagram_data.db' database.
+
+    This function establishes a connection to the database, creates the necessary tables,
+    and commits the changes.
+    """
     conn = sqlite3.connect('instagram_data.db')
     cursor = conn.cursor()
 
@@ -39,7 +46,13 @@ def create_table():
 
 
 # inser data into user profile table
-def insert_user_profile_table(profile):
+def insert_user_profile_table(profile: instaloader.Profile) -> None:
+    """
+    Inserts user profile data into the 'user_profile' table in the 'instagram_data.db' database.
+
+    Args:
+        profile (instaloader.Profile): profile (instaloader.Profile): The Instagram user profile object.
+    """
     conn = sqlite3.connect('instagram_data.db')
     cursor = conn.cursor()
     
@@ -55,7 +68,13 @@ def insert_user_profile_table(profile):
 
 
 # insert data into post table
-def insert_post_table(profile):
+def insert_post_table(profile: instaloader.Profile) -> None:
+    """
+    Inserts user's Instagram posts into the 'posts' table in the SQLite database.
+
+    Args:
+        profile (instaloader.Profile): The Instagram user profile object.
+    """
     conn = sqlite3.connect('instagram_data.db')
     cursor = conn.cursor()
     
@@ -87,8 +106,18 @@ def insert_post_table(profile):
     print("Successfully insert uesr's posts into database!\n")
 
 
-# retrive data for personality trait prediction
-def retrieve_data(profile):
+def retrieve_data(profile: instaloader.Profile) -> tuple[list[str], list[str]]:
+    """
+    Retrieves user biography and post captions for personality trait prediction.
+
+    Args:
+        profile (instaloader.Profile): The Instagram user profile object.
+
+    Returns:
+        Tuple[List[str], List[str]]: A tuple containing two lists:
+            - The first list contains user biographies (strings).
+            - The second list contains post captions (strings).
+    """
     conn = sqlite3.connect('instagram_data.db')
     cursor = conn.cursor()
     
@@ -106,8 +135,10 @@ def retrieve_data(profile):
     return bio_rows, caption_rows
 
 
-# print all Instagram username in the database
-def print_all_username():
+def print_all_username() -> None:
+    """
+    Prints all Instagram usernames stored in the 'user_profile' table of the SQLite database.
+    """
     conn = sqlite3.connect('instagram_data.db')
     cursor = conn.cursor()
 
@@ -126,7 +157,16 @@ def print_all_username():
 
 
 # check if the input Instagarm user is stored in the database
-def is_in_the_database(username):
+def is_in_the_database(username: str) -> bool:
+    """
+    Checks if the input Instagram username is stored in the 'user_profile' table of the SQLite database.
+
+    Args:
+        username (str): The Instagram username to check.
+
+    Returns:
+        bool: True if the username is found in the database, False otherwise.
+    """
     conn = sqlite3.connect('instagram_data.db')
     cursor = conn.cursor()
 

@@ -1,18 +1,35 @@
-from transformers import BertTokenizer, BertForSequenceClassification, AutoTokenizer, AutoModelForSequenceClassification
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
+import instaloader
 import numpy as np
 import database as db
 import torch
 import os
 
 
-# Using softmax function to convert the presonality traits output as probabilities ranging from 0 and 1
-def softmax(logits):
+def softmax(logits: np.ndarray) -> np.ndarray:
+    """
+    Applies the softmax function to convert logits into probabilities.
+
+    Args:
+        logits (np.ndarray): An array of unnormalized logit values.
+
+    Returns:
+        np.ndarray: An array of probabilities, each ranging from 0 to 1.
+    """
     exp_logits = np.exp(logits - np.max(logits))
     return exp_logits / exp_logits.sum(axis=-1, keepdims=True)
 
 
-# Prepare the description text for persaonlity trait prediction
-def description_text(profile):
+def description_text(profile: instaloader.Profile) -> str:
+    """
+    Prepares the description text for personality trait prediction.
+
+    Args:
+        profile (instaloader.Profile): The Instagram user profile object.
+
+    Returns:
+        str: A concatenated string containing user biography and post captions.
+    """
     text = ""
     bio_rows, caption_rows = db.retrieve_data(profile)
     for row in bio_rows:
@@ -24,8 +41,20 @@ def description_text(profile):
     return text
 
 
-# Personality detection based on microsoft-finetuned personality model by Nasserelsaman
-def personality_detection_microsoft_finetuned(profile, threshold=0.05, endpoint= 1.0):
+def personality_detection_microsoft_finetuned(profile: instaloader.Profile, threshold: float=0.05, endpoint: float= 1.0) -> dict[str, tuple[float, float]]:
+    """
+    Predicts personality traits based on the Microsoft-finetuned personality model by Nasserelsaman.
+
+    Args:
+        profile (instaloader.Profile): The Instagram user profile object.
+        threshold (float, optional): Threshold for setting low probabilities. Defaults to 0.05.
+        endpoint (float, optional): Endpoint for setting high probabilities. Defaults to 1.0.
+
+    Returns:
+        dict[str, tuple[float, float]]: A dictionary containing predicted personality traits.
+            - Keys: 'Agreeableness', 'Conscientiousness', 'Extraversion', 'Neuroticism', 'Openness'
+            - Values: A tuple with two floats (raw probability, adjusted probability)
+    """
     token=os.getenv('huggingface_access_token')
     tokenizer = AutoTokenizer.from_pretrained ("Nasserelsaman/microsoft-finetuned-personality",token=token)
     model = AutoModelForSequenceClassification.from_pretrained ("Nasserelsaman/microsoft-finetuned-personality",token=token)
@@ -54,32 +83,6 @@ def personality_detection_microsoft_finetuned(profile, threshold=0.05, endpoint=
         
     return result
 
-
-# Personality detection based on bert-based personality model by Minej
-def personality_detection_bert_base(profile):
-    # Load the tokenizer and model from Hugging Face
-    tokenizer = BertTokenizer.from_pretrained("Minej/bert-base-personality")
-    model = BertForSequenceClassification.from_pretrained("Minej/bert-base-personality")
-
-    text = description_text(profile)
-
-    # Tokenize the input text
-    inputs = tokenizer(text, truncation=True, padding=True, return_tensors="pt")
-
-    # Get model prediction
-    outputs = model(**inputs)
-    predictions = outputs.logits.squeeze().detach().numpy()
-
-    # Apply softmax to the prediction to get probabilities
-    probabilities = softmax(predictions)
-
-    # define personality traits
-    label_names = ['Extroversion', 'Neuroticism', 'Agreeableness', 'Conscientiousness', 'Openness']
-
-    # Map predictions to traits
-    result = {label_names[i]: round(float(probabilities[i]), 2) for i in range(len(label_names))}
-
-    return result
 
 
 

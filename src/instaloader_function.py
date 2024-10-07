@@ -1,19 +1,24 @@
 import instaloader
-import time
 
-# a class to define your own data fetching speed for instaloader
-class MyRateController(instaloader.RateController):
-    def sleep(self):
-        time.sleep(5) # fetch data per 5s
+def initialize_instaloader() -> instaloader.Instaloader: 
+    """
+    Initializes an Instaloader instance.
 
-
-# Initialize Instaloader 
-def initialize_instaloader():
+    Returns:
+        instaloader.Instaloader: An initialized Instaloader object.
+    """
     return instaloader.Instaloader()
 
 
-# Login to Instagram
-def instagram_login(L, username, password):
+def instagram_login(L: instaloader.Instaloader, username: str, password:str) -> None:
+    """
+    Login to Instagram using Instaloader.
+
+    Args:
+        L (instaloader.Instaloader): An initialized Instaloader instance.
+        username (str): The Instagram username.
+        password (str): The corresponding password.
+    """
     try:
         L.context.log("Logging in")
         L.load_session_from_file(username)
@@ -33,7 +38,17 @@ def instagram_login(L, username, password):
 
 
 # Input the target name
-def target_name_input(L, profile_name):
+def target_name_input(L: instaloader.Instaloader, profile_name: str) -> instaloader.Profile:
+    """
+    Fetches an Instagram user profile using Instaloader.
+
+    Args:
+        L (instaloader.Instaloader): An initialized Instaloader instance.
+        profile_name (str): The username of the target profile.
+
+    Returns:
+        instaloader.Profile: The user profile object.
+    """
     profile = instaloader.Profile.from_username(L.context, profile_name)
     return profile
 

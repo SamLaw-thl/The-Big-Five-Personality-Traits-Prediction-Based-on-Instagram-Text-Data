@@ -4,7 +4,10 @@ import personality_prediction_model as bp
 import personality_graph as pg
 
 
-def main():
+def main() -> None:
+    """
+    Main function for interacting with the Instagram data pipeline and personality prediction.
+    """
     while True:
         db.create_table()
         L = ig.initialize_instaloader()
